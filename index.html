@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAYchat Campaign & P2P Tool</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #f4f4f9;
+      --card: #ffffff;
+      --primary: #5b3cc4;
+      --primary-light: #ede9fe;
+      --accent: #10b981;
+      --text: #1e293b;
+      --muted: #64748b;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { margin: 0; padding: 14px; background: var(--bg); color: var(--text); }
+    .header {
+      background: var(--primary); color: white; padding: 16px; border-radius: 14px;
+      text-align: center; margin-bottom: 14px;
+    }
+    .header h2 { margin: 0; font-size: 18px; }
+    .header p { margin: 4px 0 0; font-size: 12px; opacity: 0.9; }
+    .tabs {
+      display: flex; gap: 6px; margin-bottom: 14px; background: #e2e8f0; padding: 5px; border-radius: 12px;
+    }
+    .tab-btn {
+      flex: 1; padding: 10px 6px; border: none; border-radius: 9px; background: transparent;
+      color: var(--muted); font-weight: 700; font-size: 12px; cursor: pointer;
+    }
+    .tab-btn.active { background: var(--primary); color: white; }
+    .card {
+      background: var(--card); padding: 16px; border-radius: 14px; margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+    input, select {
+      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;
+      background: #f8fafc; color: var(--text); font-size: 14px;
+    }
+    input:focus { outline: none; border-color: var(--primary); }
+    .result-box {
+      background: var(--primary-light); border: 1px solid #c4b5fd;
+      padding: 12px; border-radius: 10px; margin-top: 12px;
+    }
+    .result-row {
+      display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;
+    }
+    .result-row:last-child { margin-bottom: 0; font-weight: 800; font-size: 15px; color: var(--primary); }
+    .btn-gen {
+      width: 100%; padding: 12px; background: var(--primary); color: white; border: none;
+      border-radius: 9px; font-weight: 700; cursor: pointer; margin-top: 6px; font-size: 14px;
+    }
+    .post-card {
+      background: #f8fafc; border-left: 4px solid var(--primary); padding: 10px;
+      border-radius: 8px; margin-top: 10px; font-size: 13px;
+    }
+    .post-title { font-weight: 700; color: var(--primary); margin-bottom: 4px; font-size: 12px; }
+    .copy-btn {
+      margin-top: 6px; padding: 6px 12px; font-size: 11px; background: #e2e8f0;
+      border: none; border-radius: 6px; cursor: pointer; font-weight: 600;
+    }
+    .links-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+    .cta-btn {
+      display: block; width: 100%; padding: 12px; text-align: center; background: var(--primary);
+      color: white; font-weight: 700; text-decoration: none; border-radius: 10px; font-size: 13px;
+    }
+    .cta-btn.secondary { background: #ede9fe; color: var(--primary); border: 1px solid #c4b5fd; }
+    .badge {
+      display: inline-block; background: #fef3c7; color: #92400e; font-size: 11px;
+      padding: 4px 8px; border-radius: 6px; font-weight: 700; margin-bottom: 10px;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2>💜 PAYchat Interactive Assistant</h2>
+    <p>5-Post Campaign Builder • P2P & Channel Calculator</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('campaign')">📢 5-Post Series</button>
+    <button class="tab-btn" onclick="switchTab('p2p')">💱 P2P Calc</button>
+    <button class="tab-btn" onclick="switchTab('channel')">📈 Channel ROI</button>
+  </div>
+
+  <!-- TAB 1: 5-Post Campaign Generator -->
+  <div id="campaign-section" class="card">
+    <span class="badge">🎁 0% Platform Fee + $30 New Ad Credit</span>
+    <div class="form-group">
+      <label>Product / Channel Name</label>
+      <input type="text" id="prodName" placeholder="e.g. PlusTech Crypto">
+    </div>
+    <div class="form-group">
+      <label>Main Problem You Solve / Value</label>
+      <input type="text" id="prodBenefit" placeholder="e.g. Daily accurate market analysis">
+    </div>
+    <div class="form-group">
+      <label>Your Telegram Link</label>
+      <input type="text" id="prodLink" placeholder="https://t.me/yourchannel">
+    </div>
+    <button class="btn-gen" onclick="generate5Posts()">✨ Build My 5-Post Ad Series</button>
+    <div id="postsOutput"></div>
+  </div>
+
+  <!-- TAB 2: P2P & 2% Affiliate Calculator -->
+  <div id="p2p-section" class="card hidden">
+    <div class="form-group">
+      <label>USDT Amount</label>
+      <input type="number" id="usdtAmt" value="50" oninput="calcP2P()">
+    </div>
+    <div class="form-group">
+      <label>Buy Price (ETB/USDT)</label>
+      <input type="number" id="buyRate" value="180.00" step="0.1" oninput="calcP2P()">
+    </div>
+    <div class="form-group">
+      <label>Sell Price (ETB/USDT)</label>
+      <input type="number" id="sellRate" value="184.00" step="0.1" oninput="calcP2P()">
+    </div>
+    <div class="form-group">
+      <label>Affiliate Share (2%)</label>
+      <select id="affBonus" onchange="calcP2P()">
+        <option value="0">Standard Trade (0%)</option>
+        <option value="2">With 2% Affiliate Share</option>
+      </select>
+    </div>
+
+    <div class="result-box">
+      <div class="result-row">
+        <span>Total Buy Cost:</span>
+        <span id="p2pCost">9,000 ETB</span>
+      </div>
+      <div class="result-row">
+        <span>2% Affiliate Bonus:</span>
+        <span id="p2pAff">0 ETB</span>
+      </div>
+      <div class="result-row">
+        <span>Estimated Net Profit:</span>
+        <span id="p2pProfit">+200 ETB</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Channel Earnings Estimator -->
+  <div id="channel-section" class="card hidden">
+    <span class="badge">⏱️ 24h Guaranteed • ~18 Days Avg Stay</span>
+    <div class="form-group">
+      <label>Your Price Per Ad ($ USD)</label>
+      <input type="number" id="adPriceUsd" value="20" oninput="calcChannel()">
+    </div>
+    <div class="form-group">
+      <label>Ads Sold Per Month</label>
+      <input type="number" id="adsMonth" value="8" oninput="calcChannel()">
+    </div>
+
+    <div class="result-box">
+      <div class="result-row">
+        <span>Monthly Revenue (USD):</span>
+        <span id="chUsd">$160</span>
+      </div>
+      <div class="result-row">
+        <span>Est. Value in ETB (@182):</span>
+        <span id="chEtb">29,120 ETB</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Official PAYchat Links -->
+  <div class="links-grid">
+    <a href="https://t.me/paychat_aibot" class="cta-btn" target="_blank">🤖 Open PAYchat Telegram MiniApp</a>
+    <a href="https://paychatads.com" class="cta-btn secondary" target="_blank">📢 Explore Channels & Prices</a>
+    <a href="https://paychat.info/ads" class="cta-btn secondary" target="_blank">🌐 PAYchat Telegram Advertising</a>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      ['campaign', 'p2p', 'channel'].forEach(id => document.getElementById(id + '-section').classList.add('hidden'));
+      
+      if (tab === 'campaign') document.querySelectorAll('.tab-btn')[0].classList.add('active');
+      if (tab === 'p2p') document.querySelectorAll('.tab-btn')[1].classList.add('active');
+      if (tab === 'channel') document.querySelectorAll('.tab-btn')[2].classList.add('active');
+      
+      document.getElementById(tab + '-section').classList.remove('hidden');
+    }
+
+    function generate5Posts() {
+      const name = document.getElementById('prodName').value || 'Our Channel';
+      const benefit = document.getElementById('prodBenefit').value || 'smart, reliable updates every day';
+      const link = document.getElementById('prodLink').value || 'https://t.me/paychat_aibot';
+
+      const posts = [
+        {
+          title: '1️⃣ The Introduction — Build awareness',
+          text: `Tired of wasting time searching for reliable info?\n\nMeet ${name} — created to give you ${benefit}.\n\nSee what we're about 👉 ${link}`
+        },
+        {
+          title: '2️⃣ The Main Promotion — Show the value',
+          text: `🚀 Ready to level up?\n\nJoin ${name} and get ${benefit} delivered straight to you.\n\nExplore now 👉 ${link}`
+        },
+        {
+          title: '3️⃣ The Reminder — Build confidence',
+          text: `Why are people joining ${name}?\n\n✅ ${benefit}\n✅ Clear & actionable content\n✅ Active community\n\nCheck it out 👉 ${link}`
+        },
+        {
+          title: '4️⃣ The Follow-up — Answer objections',
+          text: `Not sure if ${name} is for you?\n\nIt's completely free to join and see how ${benefit} works for you.\n\nTake a look 👉 ${link}`
+        },
+        {
+          title: '5️⃣ The Final Call — Encourage action',
+          text: `🎯 Don't miss out!\n\nJoin ${name} today and start benefiting from ${benefit} right away.\n\nTap to join 👉 ${link}`
+        }
+      ];
+
+      const container = document.getElementById('postsOutput');
+      container.innerHTML = '';
+      posts.forEach((p, idx) => {
+        container.innerHTML += `
+          <div class="post-card">
+            <div class="post-title">${p.title}</div>
+            <div id="post-txt-${idx}" style="white-space: pre-line;">${p.text}</div>
+            <button class="copy-btn" onclick="copyPost(${idx})">📋 Copy Post ${idx + 1}</button>
+          </div>
+        `;
+      });
+    }
+
+    function copyPost(idx) {
+      const txt = document.getElementById(`post-txt-${idx}`).innerText;
+      navigator.clipboard.writeText(txt);
+      alert('Post ' + (idx + 1) + ' copied!');
+    }
+
+    function calcP2P() {
+      const amt = parseFloat(document.getElementById('usdtAmt').value) || 0;
+      const buy = parseFloat(document.getElementById('buyRate').value) || 0;
+      const sell = parseFloat(document.getElementById('sellRate').value) || 0;
+      const affPct = parseFloat(document.getElementById('affBonus').value) || 0;
+
+      const cost = amt * buy;
+      const rev = amt * sell;
+      const aff = rev * (affPct / 100);
+      const profit = (rev - cost) + aff;
+
+      document.getElementById('p2pCost').innerText = cost.toLocaleString() + ' ETB';
+      document.getElementById('p2pAff').innerText = aff.toFixed(1) + ' ETB';
+      const el = document.getElementById('p2pProfit');
+      el.innerText = (profit >= 0 ? '+' : '') + profit.toFixed(1) + ' ETB';
+      el.style.color = profit >= 0 ? '#10b981' : '#ef4444';
+    }
+
+    function calcChannel() {
+      const price = parseFloat(document.getElementById('adPriceUsd').value) || 0;
+      const count = parseFloat(document.getElementById('adsMonth').value) || 0;
+      const usd = price * count;
+      const etb = usd * 182;
+
+      document.getElementById('chUsd').innerText = '$' + usd.toLocaleString();
+      document.getElementById('chEtb').innerText = etb.toLocaleString() + ' ETB';
+    }
+
+    calcP2P();
+    calcChannel();
+  </script>
+</body>
+</html>
