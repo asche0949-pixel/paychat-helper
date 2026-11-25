@@ -86,7 +86,7 @@
       border-radius: 20px;
     }
 
-    /* Navigation Tabs (4 Tabs including Guide on the side) */
+    /* Navigation Tabs */
     .nav-tabs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -161,6 +161,17 @@
       font-size: 12px;
       color: var(--text-muted);
       margin-bottom: 14px;
+    }
+
+    .strategy-banner {
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #e2e8f0;
     }
 
     .form-group {
@@ -258,6 +269,14 @@
       white-space: pre-line;
     }
 
+    .post-stage {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
     /* Guide Tab Specific Styling (Bilingual English Top / Amharic Bottom) */
     .guide-block {
       background: #0a1024;
@@ -314,22 +333,42 @@
       margin-bottom: 4px;
     }
 
-    .cta-footer {
+    .links-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
       margin-top: 14px;
-      text-align: center;
     }
 
     .cta-btn {
       display: block;
       width: 100%;
+      text-align: center;
       text-decoration: none;
       background: linear-gradient(135deg, #2563eb, #6d28d9);
       color: #ffffff;
       font-weight: 700;
-      font-size: 14px;
-      padding: 13px;
+      font-size: 13.5px;
+      padding: 12px;
       border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(109, 40, 217, 0.4);
+      box-shadow: 0 4px 16px rgba(109, 40, 217, 0.35);
+      cursor: pointer;
+      border: none;
+    }
+
+    .secondary-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #e2e8f0;
+      font-weight: 600;
+      font-size: 12.5px;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -347,7 +386,7 @@
     <div class="status-pill">0% Fee Active</div>
   </div>
 
-  <!-- 4 Navigation Tabs (Ad Builder | P2P Calc | Channel ROI | Guide on the side) -->
+  <!-- 4 Navigation Tabs -->
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('ads', this)">
       <span class="icon">📢</span>
@@ -367,28 +406,33 @@
     </button>
   </div>
 
-  <!-- TAB 1: 5-Post Ad Builder -->
+  <!-- TAB 1: 5-Post Ad Builder (Official Strategy) -->
   <div id="tab-ads" class="tab-content active">
     <div class="card">
-      <div class="card-title">📢 5-Post Ad Campaign Builder</div>
-      <div class="card-subtitle">Generate 5 high-converting Telegram ad posts in seconds.</div>
+      <div class="card-title">📣 5-Post Campaign Strategy Builder</div>
+      <div class="card-subtitle">One post tests. A series builds results.</div>
+
+      <div class="strategy-banner">
+        👀 <strong>1. Notice</strong> ➔ 🧠 <strong>2. Remember</strong> ➔ 🎯 <strong>3. Act</strong><br>
+        Generate a purposeful 5-post Telegram sequence (Introduction, Main Promo, Reminder, Follow-up, and Final Call) with <strong>0% PAYchat platform fee</strong>.
+      </div>
 
       <div class="form-group">
         <label>Product / Channel / Offer Name</label>
-        <input type="text" id="adProduct" placeholder="e.g., PAYchat P2P Trading or Crypto Signals" />
+        <input type="text" id="adProduct" placeholder="e.g., PAYchat Ads or Your Telegram Channel" />
       </div>
 
       <div class="form-group">
-        <label>Main Benefit / Hook</label>
-        <input type="text" id="adBenefit" placeholder="e.g., Fast ETB/USDT transfers in under 3 mins" />
+        <label>Problem Solved / Key Value</label>
+        <input type="text" id="adBenefit" placeholder="e.g., Book verified 24-hour Telegram channel ads with 0% fee" />
       </div>
 
       <div class="form-group">
-        <label>Call-to-Action Link</label>
-        <input type="text" id="adLink" value="https://t.me/PAYchatBot" />
+        <label>Destination Link</label>
+        <input type="text" id="adLink" value="https://t.me/paychat_aibot" />
       </div>
 
-      <button class="btn-primary" onclick="generateAds()">Generate 5 Ad Posts</button>
+      <button class="btn-primary" onclick="generateAds()">🚀 Generate 5-Post Campaign Series</button>
       <div id="adsOutput"></div>
     </div>
   </div>
@@ -439,7 +483,7 @@
       </div>
 
       <div class="form-group">
-        <label>Price Per Ad Post (USDT)</label>
+        <label>Price Per 24h Ad Post (USDT)</label>
         <input type="number" id="roiPrice" value="15" oninput="calcROI()" />
       </div>
 
@@ -546,37 +590,55 @@
 
       <!-- 4. ADS & BONUS GUIDE -->
       <div class="guide-block">
-        <span class="guide-badge badge-blue">4. CHANNEL ADS & $30 CREDIT • ማስታወቂያ እና ቦነስ</span>
+        <span class="guide-badge badge-blue">4. TELEGRAM ADS & $30 CREDIT • ማስታወቂያ እና ቦነስ</span>
         
         <div class="lang-en">
           <strong>English Guide:</strong>
           <ul class="guide-list">
-            <li><strong>Refund Guaranteed Ads:</strong> Browse verified channels with transparent Views, Reach, and stay duration—backed by a <strong>100% Refund Guarantee</strong>.</li>
-            <li><strong>$30 Welcome Credit:</strong> Eligible accounts receive up to <strong>$30 ad credit</strong> to launch campaigns right away.</li>
+            <li><strong>0% Advertiser Fee & Verified Channels:</strong> Compare subscribers, views, reach, and prices—book <strong>24-hour placements</strong> with <strong>0% platform fee</strong> and <strong>100% Refund Guarantee</strong>.</li>
+            <li><strong>$30 Welcome Credit:</strong> Eligible accounts receive up to <strong>$30 ad credit</strong> to test a 5-post campaign right away.</li>
           </ul>
         </div>
 
         <div class="lang-am">
           <strong>የአማርኛ መመሪያ፦</strong>
           <ul class="guide-list">
-            <li><strong>100% ዋስትና ያለው ማስታወቂያ፦</strong> የቻናሎችን እይታ (Views) እና ቆይታ በግልጽ አይተው ማስታወቂያ ማሰራት ይችላሉ፤ ፖስቱ ካልተለጠፈ <strong>100% ገንዘብ ተመላሽ (Refund Guaranteed)</strong> ነው።</li>
+            <li><strong>0% ኮሚሽን እና 100% ዋስትና፦</strong> የቻናሎችን ተከታዮች፣ እይታ (Views) እና ዋጋ አወዳድረው ያለምንም ተጨማሪ ክፍያ (<strong>0% Fee</strong>) የ<strong>24 ሰዓት ማስታወቂያ</strong> ማሰራት ይችላሉ፤ ፖስቱ ካልተለጠፈ <strong>100% ገንዘብ ተመላሽ</strong> ነው።</li>
             <li><strong>የ$30 Welcome Credit፦</strong> አዳዲስ ተጠቃሚዎች ማስታወቂያ ለመጀመር የሚያግዝ የ<strong>$30 Credit</strong> ቦነስ ያገኛሉ።</li>
           </ul>
         </div>
       </div>
 
-      <div class="cta-footer">
-        <a href="https://t.me/PAYchatBot" class="cta-btn" target="_blank">🚀 Launch Official PAYchat Bot</a>
+      <!-- Official PAYchat Links -->
+      <div class="links-grid">
+        <button class="cta-btn" onclick="openTgLink('https://t.me/paychat_aibot')">🤖 Launch PAYchat Telegram MiniApp</button>
+        <button class="secondary-btn" onclick="openWebLink('https://paychat.info/ads')">🌐 PAYchat — Telegram Advertising</button>
+        <button class="secondary-btn" onclick="openWebLink('https://paychatads.com')">📢 PAYchat Ads — Explore Channels & Prices</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Initialize Telegram WebApp
-    if (window.Telegram && window.Telegram.WebApp) {
-      const tg = window.Telegram.WebApp;
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) {
       tg.ready();
       tg.expand();
+    }
+
+    function openTgLink(url) {
+      if (tg && tg.openTelegramLink) {
+        tg.openTelegramLink(url);
+      } else {
+        window.open(url, '_blank');
+      }
+    }
+
+    function openWebLink(url) {
+      if (tg && tg.openLink) {
+        tg.openLink(url);
+      } else {
+        window.open(url, '_blank');
+      }
     }
 
     function switchTab(tabName, btn) {
@@ -587,24 +649,40 @@
     }
 
     function generateAds() {
-      const prod = document.getElementById('adProduct').value.trim() || 'PAYchat';
-      const benefit = document.getElementById('adBenefit').value.trim() || 'Fast & secure USDT/ETB transactions with 0% fees';
-      const link = document.getElementById('adLink').value.trim() || 'https://t.me/PAYchatBot';
+      const prod = document.getElementById('adProduct').value.trim() || 'PAYchat Ads';
+      const benefit = document.getElementById('adBenefit').value.trim() || 'Book verified 24-hour Telegram channel ads with 0% advertiser fee';
+      const link = document.getElementById('adLink').value.trim() || 'https://t.me/paychat_aibot';
 
       const posts = [
-        `🔥 Post 1 (Hook): Stop wasting money on high fees!\nDiscover ${prod} — ${benefit}.\n👉 Start now: ${link}`,
-        `⚡ Post 2 (Speed & Trust): Need results in under 3 minutes?\nJoin thousands already using ${prod} every day.\n🚀 Try it here: ${link}`,
-        `💰 Post 3 (Profit Angle): Maximize your daily earnings with ${prod}!\n${benefit}.\n📲 Launch instantly: ${link}`,
-        `🛡️ Post 4 (Social Proof): 100% trusted, fast, and built right inside Telegram.\nExperience ${prod} today!\n🔗 Join here: ${link}`,
-        `🎯 Post 5 (Urgent CTA): Ready to level up?\nGet started with ${prod} in seconds — ${benefit}.\n👇 Tap below: ${link}`
+        {
+          stage: '1️⃣ The Introduction — Build Awareness',
+          body: `👀 Struggling to get real results from Telegram promotions?\n\nMeet ${prod} — designed to solve that exact problem: ${benefit}.\n\nDiscover a smarter way to grow on Telegram:\n👉 ${link}`
+        },
+        {
+          stage: '2️⃣ The Main Promotion — Show the Value',
+          body: `🚀 Ready to reach real, active Telegram audiences?\n\nWith ${prod}, you get:\n✅ ${benefit}\n📊 Transparent views, reach & verified channels\n\nExplore how it works today:\n👉 ${link}`
+        },
+        {
+          stage: '3️⃣ The Reminder — Build Confidence',
+          body: `🧠 Why do smart advertisers choose ${prod}?\n\nBecause every placement is backed by real metrics, 0% platform fees, and verified channel listings.\n\nSee the difference for yourself:\n👉 ${link}`
+        },
+        {
+          stage: '4️⃣ The Follow-up — Answer Objections',
+          body: `💡 Wondering how ${prod} stands out?\n\nNo guesswork, no hidden fees—compare subscribers, views, and prices upfront and book 24-hour placements in seconds.\n\nCheck out available options:\n👉 ${link}`
+        },
+        {
+          stage: '5️⃣ The Final Call — Encourage Action',
+          body: `🎯 One post tests. A series builds results!\n\nTake the next step with ${prod} right now — ${benefit}.\n\n👇 Launch and get started today:\n${link}`
+        }
       ];
 
       const container = document.getElementById('adsOutput');
       container.innerHTML = '';
-      posts.forEach((text, i) => {
+      posts.forEach((item, i) => {
         const div = document.createElement('div');
         div.className = 'post-item';
-        div.innerHTML = `<div>${text}</div><button class="btn-copy" onclick="copyText(this, \`${text.replace(/`/g, '\\`')}\`)">📋 Copy Post ${i + 1}</button>`;
+        const fullText = `${item.stage}\n\n${item.body}`;
+        div.innerHTML = `<div class="post-stage">${item.stage}</div><div>${item.body}</div><button class="btn-copy" onclick="copyText(this, \`${fullText.replace(/`/g, '\\`')}\`)">📋 Copy Post ${i + 1}</button>`;
         container.appendChild(div);
       });
     }
