@@ -178,6 +178,12 @@
       margin-bottom: 12px;
     }
 
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
     label {
       display: block;
       font-size: 12px;
@@ -193,7 +199,7 @@
       border-radius: 10px;
       padding: 10px 12px;
       color: #ffffff;
-      font-size: 13.5px;
+      font-size: 13px;
       outline: none;
     }
 
@@ -216,15 +222,16 @@
     }
 
     .btn-copy {
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 11.5px;
-      font-weight: 600;
+      width: 100%;
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 12.5px;
+      font-weight: 700;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 12px;
     }
 
     /* Result Boxes */
@@ -260,24 +267,29 @@
 
     .post-item {
       background: #090e1f;
-      border-left: 3px solid var(--accent);
-      border-radius: 10px;
-      padding: 11px;
-      margin-top: 10px;
-      font-size: 12.5px;
-      line-height: 1.5;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-left: 4px solid var(--accent);
+      border-radius: 12px;
+      padding: 13px;
+      margin-top: 14px;
+      font-size: 12.8px;
+      line-height: 1.6;
       white-space: pre-line;
+      color: #f8fafc;
     }
 
-    .post-stage {
+    .post-badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
       font-size: 11px;
       font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 4px;
-      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
     }
 
-    /* Guide Tab Specific Styling (Bilingual English Top / Amharic Bottom) */
+    /* Guide Tab Specific Styling */
     .guide-block {
       background: #0a1024;
       border: 1px solid rgba(56, 189, 248, 0.2);
@@ -406,33 +418,52 @@
     </button>
   </div>
 
-  <!-- TAB 1: 5-Post Ad Builder (Official Strategy) -->
+  <!-- TAB 1: High-Converting Single Long Ad Copy Generator -->
   <div id="tab-ads" class="tab-content active">
     <div class="card">
-      <div class="card-title">📣 5-Post Campaign Strategy Builder</div>
-      <div class="card-subtitle">One post tests. A series builds results.</div>
+      <div class="card-title">📣 High-Converting Channel Ad Generator</div>
+      <div class="card-subtitle">Enter your channel @username & topic to craft one persuasive, high-converting ad post.</div>
 
       <div class="strategy-banner">
-        👀 <strong>1. Notice</strong> ➔ 🧠 <strong>2. Remember</strong> ➔ 🎯 <strong>3. Act</strong><br>
-        Generate a purposeful 5-post Telegram sequence (Introduction, Main Promo, Reminder, Follow-up, and Final Call) with <strong>0% PAYchat platform fee</strong>.
+        💡 <strong>Smart Ad Pitch:</strong> Enter your Telegram channel <code>@username</code> and niche below to generate one complete, persuasive ad post ready for PAYchat (<strong>0% Platform Fee</strong> & <strong>24h Placement</strong>).
+      </div>
+
+      <div class="two-col">
+        <div class="form-group">
+          <label>Channel @Username</label>
+          <input type="text" id="adUsername" placeholder="e.g., @TechOnlineHub" />
+        </div>
+        <div class="form-group">
+          <label>Channel Niche / Category</label>
+          <select id="adNiche">
+            <option value="tech">💻 Tech & Online Earning</option>
+            <option value="crypto">🪙 Crypto & P2P Trading</option>
+            <option value="business">📈 Business & Marketing</option>
+            <option value="general">🌐 General / Entertainment</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="form-group">
+          <label>Subscribers / Avg Views</label>
+          <input type="text" id="adStats" placeholder="e.g., 25K Subs • 6K Views" />
+        </div>
+        <div class="form-group">
+          <label>Language Style</label>
+          <select id="adLang">
+            <option value="en">🇬🇧 English (Global)</option>
+            <option value="am">🇪🇹 Amharic + English</option>
+          </select>
+        </div>
       </div>
 
       <div class="form-group">
-        <label>Product / Channel / Offer Name</label>
-        <input type="text" id="adProduct" placeholder="e.g., PAYchat Ads or Your Telegram Channel" />
+        <label>What Your Channel Offers / Main Value</label>
+        <input type="text" id="adOffer" placeholder="e.g., Daily legit online earning apps, AI tools & tech tutorials" />
       </div>
 
-      <div class="form-group">
-        <label>Problem Solved / Key Value</label>
-        <input type="text" id="adBenefit" placeholder="e.g., Book verified 24-hour Telegram channel ads with 0% fee" />
-      </div>
-
-      <div class="form-group">
-        <label>Destination Link</label>
-        <input type="text" id="adLink" value="https://t.me/paychat_aibot" />
-      </div>
-
-      <button class="btn-primary" onclick="generateAds()">🚀 Generate 5-Post Campaign Series</button>
+      <button class="btn-primary" onclick="generateSingleLongAd()">✨ Generate Persuasive Ad Post</button>
       <div id="adsOutput"></div>
     </div>
   </div>
@@ -596,7 +627,7 @@
           <strong>English Guide:</strong>
           <ul class="guide-list">
             <li><strong>0% Advertiser Fee & Verified Channels:</strong> Compare subscribers, views, reach, and prices—book <strong>24-hour placements</strong> with <strong>0% platform fee</strong> and <strong>100% Refund Guarantee</strong>.</li>
-            <li><strong>$30 Welcome Credit:</strong> Eligible accounts receive up to <strong>$30 ad credit</strong> to test a 5-post campaign right away.</li>
+            <li><strong>$30 Welcome Credit:</strong> Eligible accounts receive up to <strong>$30 ad credit</strong> to launch campaigns right away.</li>
           </ul>
         </div>
 
@@ -648,50 +679,77 @@
       btn.classList.add('active');
     }
 
-    function generateAds() {
-      const prod = document.getElementById('adProduct').value.trim() || 'PAYchat Ads';
-      const benefit = document.getElementById('adBenefit').value.trim() || 'Book verified 24-hour Telegram channel ads with 0% advertiser fee';
-      const link = document.getElementById('adLink').value.trim() || 'https://t.me/paychat_aibot';
+    function generateSingleLongAd() {
+      let username = document.getElementById('adUsername').value.trim() || '@YourTechChannel';
+      if (!username.startsWith('@') && !username.startsWith('http')) {
+        username = '@' + username;
+      }
+      const niche = document.getElementById('adNiche').value;
+      const stats = document.getElementById('adStats').value.trim() || 'Active Daily Audience • High Engagement';
+      const lang = document.getElementById('adLang').value;
+      const offer = document.getElementById('adOffer').value.trim();
 
-      const posts = [
-        {
-          stage: '1️⃣ The Introduction — Build Awareness',
-          body: `👀 Struggling to get real results from Telegram promotions?\n\nMeet ${prod} — designed to solve that exact problem: ${benefit}.\n\nDiscover a smarter way to grow on Telegram:\n👉 ${link}`
-        },
-        {
-          stage: '2️⃣ The Main Promotion — Show the Value',
-          body: `🚀 Ready to reach real, active Telegram audiences?\n\nWith ${prod}, you get:\n✅ ${benefit}\n📊 Transparent views, reach & verified channels\n\nExplore how it works today:\n👉 ${link}`
-        },
-        {
-          stage: '3️⃣ The Reminder — Build Confidence',
-          body: `🧠 Why do smart advertisers choose ${prod}?\n\nBecause every placement is backed by real metrics, 0% platform fees, and verified channel listings.\n\nSee the difference for yourself:\n👉 ${link}`
-        },
-        {
-          stage: '4️⃣ The Follow-up — Answer Objections',
-          body: `💡 Wondering how ${prod} stands out?\n\nNo guesswork, no hidden fees—compare subscribers, views, and prices upfront and book 24-hour placements in seconds.\n\nCheck out available options:\n👉 ${link}`
-        },
-        {
-          stage: '5️⃣ The Final Call — Encourage Action',
-          body: `🎯 One post tests. A series builds results!\n\nTake the next step with ${prod} right now — ${benefit}.\n\n👇 Launch and get started today:\n${link}`
+      let fullPost = '';
+
+      if (lang === 'am') {
+        const defaultAmOffer = offer || 'የቴክኖሎጂ እውቀት፣ አዳዲስ AI ቱሎች፣ እና አስተማማኝ የኦንላይን ገቢ ማግኛ ዘዴዎች (Online Earning & Tech Tutorials)';
+        fullPost = `🚀 በቴክኖሎጂ እና በኦንላይን ሥራ ዓለም ቀድመው መገኘት ይፈልጋሉ?\n\n` +
+          `እንኳን ወደ ${username} በደህና መጡ! 📊 (${stats})\n\n` +
+          `በቻናላችን ውስጥ የሚያገኙት፦\n` +
+          `✅ ${defaultAmOffer}\n` +
+          `✅ በተግባር የተፈተኑ የኦንላይን ሥራዎች እና የክሪፕቶ/P2P ግንዛቤዎች\n` +
+          `✅ ጊዜዎንና ገንዘብዎን የሚቆጥቡ ዘመናዊ የቴክኖሎጂ መፍትሄዎች\n\n` +
+          `📢 በዚህ ቻናል (${username}) ላይ ማስታወቂያ ማሰራት ይፈልጋሉ?\n` +
+          `በPAYchat በኩል ያለምንም ተጨማሪ ኮሚሽን (0% Platform Fee) እና በ100% ዋስትና የ24 ሰዓት ማስታወቂያዎን አሁኑኑ ይዘዙ!\n\n` +
+          `👉 ቻናሉን ይቀላቀሉ፦ ${username}\n` +
+          `⚡ በPAYchat ማስታወቂያ ለማዘዝ፦ https://t.me/paychat_aibot`;
+      } else {
+        let hook = '💻 Looking to master Tech, AI Tools & Real Online Earning opportunities?';
+        let defaultOffer = 'Verified online earning platforms, step-by-step tech guides, and digital growth strategies';
+
+        if (niche === 'crypto') {
+          hook = '🪙 Want smarter Crypto insights, P2P strategies & instant market updates?';
+          defaultOffer = 'Daily USDT/P2P trading tips, market analysis, and safe digital finance guides';
+        } else if (niche === 'business') {
+          hook = '📈 Ready to scale your online business and reach high-intent Telegram buyers?';
+          defaultOffer = 'Actionable digital marketing strategies, growth hacks, and vetted business tools';
+        } else if (niche === 'general') {
+          hook = '🔥 Looking for trending updates, exclusive resources & high-engagement content?';
+          defaultOffer = 'Curated daily updates, viral insights, and valuable community perks';
         }
-      ];
+
+        const finalOffer = offer || defaultOffer;
+
+        fullPost = `${hook}\n\n` +
+          `Meet ${username} — one of Telegram's fastest-growing communities (${stats})! 🎯\n\n` +
+          `Here is what makes ${username} stand out:\n` +
+          `✅ ${finalOffer}\n` +
+          `✅ Practical, no-fluff tutorials you can apply immediately\n` +
+          `✅ Trusted by an active, responsive audience every single day\n\n` +
+          `📣 Want to promote your project or brand on ${username}?\n` +
+          `Book a verified 24-hour ad placement on PAYchat with 0% advertiser platform fee & 100% refund protection!\n\n` +
+          `👉 Join ${username} now!\n` +
+          `⚡ Book Ads on PAYchat: https://t.me/paychat_aibot\n` +
+          `📢 Explore Channels: https://paychatads.com`;
+      }
 
       const container = document.getElementById('adsOutput');
-      container.innerHTML = '';
-      posts.forEach((item, i) => {
-        const div = document.createElement('div');
-        div.className = 'post-item';
-        const fullText = `${item.stage}\n\n${item.body}`;
-        div.innerHTML = `<div class="post-stage">${item.stage}</div><div>${item.body}</div><button class="btn-copy" onclick="copyText(this, \`${fullText.replace(/`/g, '\\`')}\`)">📋 Copy Post ${i + 1}</button>`;
-        container.appendChild(div);
-      });
+      container.innerHTML = `
+        <div class="post-item">
+          <div class="post-badge">✨ Ready-to-Publish Persuasive Ad Copy</div>
+          <div>${fullPost}</div>
+          <button class="btn-copy" onclick="copyText(this)">📋 Copy Full Ad Post</button>
+        </div>
+      `;
+      container.dataset.adText = fullPost;
     }
 
-    function copyText(btn, text) {
+    function copyText(btn) {
+      const text = document.getElementById('adsOutput').dataset.adText || '';
       navigator.clipboard.writeText(text);
       const old = btn.innerText;
-      btn.innerText = '✅ Copied!';
-      setTimeout(() => btn.innerText = old, 1500);
+      btn.innerText = '✅ Copied! Ready to Paste';
+      setTimeout(() => btn.innerText = old, 1800);
     }
 
     function calcP2P() {
