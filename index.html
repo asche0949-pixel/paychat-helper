@@ -1,274 +1,643 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PAYchat Campaign & P2P Tool</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PAYchat Interactive Assistant</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #f4f4f9;
-      --card: #ffffff;
-      --primary: #5b3cc4;
-      --primary-light: #ede9fe;
-      --accent: #10b981;
-      --text: #1e293b;
-      --muted: #64748b;
+      --bg-dark: #070b19;
+      --card-bg: #11182e;
+      --card-border: rgba(56, 189, 248, 0.22);
+      --primary: #2563eb;
+      --accent: #38bdf8;
+      --purple: #6d28d9;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
     }
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-    body { margin: 0; padding: 14px; background: var(--bg); color: var(--text); }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top right, #131c3d, var(--bg-dark) 65%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 14px 14px 36px;
+    }
+
+    /* Header */
     .header {
-      background: var(--primary); color: white; padding: 16px; border-radius: 14px;
-      text-align: center; margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(109, 40, 217, 0.2));
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
     }
-    .header h2 { margin: 0; font-size: 18px; }
-    .header p { margin: 4px 0 0; font-size: 12px; opacity: 0.9; }
-    .tabs {
-      display: flex; gap: 6px; margin-bottom: 14px; background: #e2e8f0; padding: 5px; border-radius: 12px;
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+
+    .logo-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2.5px solid #2563eb;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .brand-text h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-text p {
+      font-size: 11px;
+      color: var(--accent);
+    }
+
+    .status-pill {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 20px;
+    }
+
+    /* Navigation Tabs (4 Tabs including Guide on the side) */
+    .nav-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: #0c1226;
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 16px;
+    }
+
     .tab-btn {
-      flex: 1; padding: 10px 6px; border: none; border-radius: 9px; background: transparent;
-      color: var(--muted); font-weight: 700; font-size: 12px; cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 9px 4px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
     }
-    .tab-btn.active { background: var(--primary); color: white; }
+
+    .tab-btn span.icon {
+      font-size: 16px;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.45);
+    }
+
+    /* Tab Sections */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & Forms */
     .card {
-      background: var(--card); padding: 16px; border-radius: 14px; margin-bottom: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 15px;
+      margin-bottom: 14px;
     }
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
-    input, select {
-      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;
-      background: #f8fafc; color: var(--text); font-size: 14px;
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    input:focus { outline: none; border-color: var(--primary); }
-    .result-box {
-      background: var(--primary-light); border: 1px solid #c4b5fd;
-      padding: 12px; border-radius: 10px; margin-top: 12px;
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
     }
-    .result-row {
-      display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;
+
+    .form-group {
+      margin-bottom: 12px;
     }
-    .result-row:last-child { margin-bottom: 0; font-weight: 800; font-size: 15px; color: var(--primary); }
-    .btn-gen {
-      width: 100%; padding: 12px; background: var(--primary); color: white; border: none;
-      border-radius: 9px; font-weight: 700; cursor: pointer; margin-top: 6px; font-size: 14px;
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-bottom: 5px;
+      font-weight: 500;
     }
-    .post-card {
-      background: #f8fafc; border-left: 4px solid var(--primary); padding: 10px;
-      border-radius: 8px; margin-top: 10px; font-size: 13px;
+
+    input, select, textarea {
+      width: 100%;
+      background: #090e1f;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #ffffff;
+      font-size: 13.5px;
+      outline: none;
     }
-    .post-title { font-weight: 700; color: var(--primary); margin-bottom: 4px; font-size: 12px; }
-    .copy-btn {
-      margin-top: 6px; padding: 6px 12px; font-size: 11px; background: #e2e8f0;
-      border: none; border-radius: 6px; cursor: pointer; font-weight: 600;
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
     }
-    .links-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-copy {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    /* Result Boxes */
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .stat-box {
+      background: #090e1f;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .stat-box .label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .stat-box .value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    .stat-box.green .value {
+      color: var(--success);
+    }
+
+    .post-item {
+      background: #090e1f;
+      border-left: 3px solid var(--accent);
+      border-radius: 10px;
+      padding: 11px;
+      margin-top: 10px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    /* Guide Tab Specific Styling (Bilingual English Top / Amharic Bottom) */
+    .guide-block {
+      background: #0a1024;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 14px;
+      padding: 13px;
+      margin-bottom: 12px;
+    }
+
+    .guide-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .badge-blue { background: rgba(37, 99, 235, 0.25); color: #60a5fa; }
+    .badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .badge-gold { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+    .lang-en {
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: #f1f5f9;
+      padding-bottom: 9px;
+      border-bottom: 1px dashed rgba(148, 163, 184, 0.25);
+    }
+
+    .lang-am {
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: #cbd5e1;
+      padding-top: 9px;
+    }
+
+    .highlight-alert {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 10px;
+      padding: 9px 11px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #fde68a;
+    }
+
+    .guide-list {
+      padding-left: 16px;
+      margin-top: 4px;
+    }
+
+    .guide-list li {
+      margin-bottom: 4px;
+    }
+
+    .cta-footer {
+      margin-top: 14px;
+      text-align: center;
+    }
+
     .cta-btn {
-      display: block; width: 100%; padding: 12px; text-align: center; background: var(--primary);
-      color: white; font-weight: 700; text-decoration: none; border-radius: 10px; font-size: 13px;
+      display: block;
+      width: 100%;
+      text-decoration: none;
+      background: linear-gradient(135deg, #2563eb, #6d28d9);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 13px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(109, 40, 217, 0.4);
     }
-    .cta-btn.secondary { background: #ede9fe; color: var(--primary); border: 1px solid #c4b5fd; }
-    .badge {
-      display: inline-block; background: #fef3c7; color: #92400e; font-size: 11px;
-      padding: 4px 8px; border-radius: 6px; font-weight: 700; margin-bottom: 10px;
-    }
-    .hidden { display: none; }
   </style>
 </head>
 <body>
 
+  <!-- Header -->
   <div class="header">
-    <h2>💜 PAYchat Interactive Assistant</h2>
-    <p>5-Post Campaign Builder • P2P & Channel Calculator</p>
+    <div class="brand">
+      <div class="logo-badge">⚡</div>
+      <div class="brand-text">
+        <h1>PAYchat Assistant</h1>
+        <p>Chat to Pay • Growth & Guide Hub</p>
+      </div>
+    </div>
+    <div class="status-pill">0% Fee Active</div>
   </div>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('campaign')">📢 5-Post Series</button>
-    <button class="tab-btn" onclick="switchTab('p2p')">💱 P2P Calc</button>
-    <button class="tab-btn" onclick="switchTab('channel')">📈 Channel ROI</button>
+  <!-- 4 Navigation Tabs (Ad Builder | P2P Calc | Channel ROI | Guide on the side) -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('ads', this)">
+      <span class="icon">📢</span>
+      <span>Ad Builder</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('p2p', this)">
+      <span class="icon">💱</span>
+      <span>P2P Calc</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('roi', this)">
+      <span class="icon">📈</span>
+      <span>Channel ROI</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('guide', this)">
+      <span class="icon">📖</span>
+      <span>Guide</span>
+    </button>
   </div>
 
-  <!-- TAB 1: 5-Post Campaign Generator -->
-  <div id="campaign-section" class="card">
-    <span class="badge">🎁 0% Platform Fee + $30 New Ad Credit</span>
-    <div class="form-group">
-      <label>Product / Channel Name</label>
-      <input type="text" id="prodName" placeholder="e.g. PlusTech Crypto">
-    </div>
-    <div class="form-group">
-      <label>Main Problem You Solve / Value</label>
-      <input type="text" id="prodBenefit" placeholder="e.g. Daily accurate market analysis">
-    </div>
-    <div class="form-group">
-      <label>Your Telegram Link</label>
-      <input type="text" id="prodLink" placeholder="https://t.me/yourchannel">
-    </div>
-    <button class="btn-gen" onclick="generate5Posts()">✨ Build My 5-Post Ad Series</button>
-    <div id="postsOutput"></div>
-  </div>
+  <!-- TAB 1: 5-Post Ad Builder -->
+  <div id="tab-ads" class="tab-content active">
+    <div class="card">
+      <div class="card-title">📢 5-Post Ad Campaign Builder</div>
+      <div class="card-subtitle">Generate 5 high-converting Telegram ad posts in seconds.</div>
 
-  <!-- TAB 2: P2P & 2% Affiliate Calculator -->
-  <div id="p2p-section" class="card hidden">
-    <div class="form-group">
-      <label>USDT Amount</label>
-      <input type="number" id="usdtAmt" value="50" oninput="calcP2P()">
-    </div>
-    <div class="form-group">
-      <label>Buy Price (ETB/USDT)</label>
-      <input type="number" id="buyRate" value="180.00" step="0.1" oninput="calcP2P()">
-    </div>
-    <div class="form-group">
-      <label>Sell Price (ETB/USDT)</label>
-      <input type="number" id="sellRate" value="184.00" step="0.1" oninput="calcP2P()">
-    </div>
-    <div class="form-group">
-      <label>Affiliate Share (2%)</label>
-      <select id="affBonus" onchange="calcP2P()">
-        <option value="0">Standard Trade (0%)</option>
-        <option value="2">With 2% Affiliate Share</option>
-      </select>
-    </div>
+      <div class="form-group">
+        <label>Product / Channel / Offer Name</label>
+        <input type="text" id="adProduct" placeholder="e.g., PAYchat P2P Trading or Crypto Signals" />
+      </div>
 
-    <div class="result-box">
-      <div class="result-row">
-        <span>Total Buy Cost:</span>
-        <span id="p2pCost">9,000 ETB</span>
+      <div class="form-group">
+        <label>Main Benefit / Hook</label>
+        <input type="text" id="adBenefit" placeholder="e.g., Fast ETB/USDT transfers in under 3 mins" />
       </div>
-      <div class="result-row">
-        <span>2% Affiliate Bonus:</span>
-        <span id="p2pAff">0 ETB</span>
+
+      <div class="form-group">
+        <label>Call-to-Action Link</label>
+        <input type="text" id="adLink" value="https://t.me/PAYchatBot" />
       </div>
-      <div class="result-row">
-        <span>Estimated Net Profit:</span>
-        <span id="p2pProfit">+200 ETB</span>
-      </div>
+
+      <button class="btn-primary" onclick="generateAds()">Generate 5 Ad Posts</button>
+      <div id="adsOutput"></div>
     </div>
   </div>
 
-  <!-- TAB 3: Channel Earnings Estimator -->
-  <div id="channel-section" class="card hidden">
-    <span class="badge">⏱️ 24h Guaranteed • ~18 Days Avg Stay</span>
-    <div class="form-group">
-      <label>Your Price Per Ad ($ USD)</label>
-      <input type="number" id="adPriceUsd" value="20" oninput="calcChannel()">
-    </div>
-    <div class="form-group">
-      <label>Ads Sold Per Month</label>
-      <input type="number" id="adsMonth" value="8" oninput="calcChannel()">
-    </div>
+  <!-- TAB 2: P2P Profit Calculator -->
+  <div id="tab-p2p" class="tab-content">
+    <div class="card">
+      <div class="card-title">💱 P2P Profit & 2% Affiliate Calculator</div>
+      <div class="card-subtitle">Calculate ETB/USDT trading margins and affiliate rewards.</div>
 
-    <div class="result-box">
-      <div class="result-row">
-        <span>Monthly Revenue (USD):</span>
-        <span id="chUsd">$160</span>
+      <div class="form-group">
+        <label>Trade Capital (USDT)</label>
+        <input type="number" id="p2pUsdt" value="100" oninput="calcP2P()" />
       </div>
-      <div class="result-row">
-        <span>Est. Value in ETB (@182):</span>
-        <span id="chEtb">29,120 ETB</span>
+
+      <div class="form-group">
+        <label>Buy Rate (ETB per 1 USDT)</label>
+        <input type="number" id="p2pBuy" value="132" oninput="calcP2P()" />
+      </div>
+
+      <div class="form-group">
+        <label>Sell Rate (ETB per 1 USDT)</label>
+        <input type="number" id="p2pSell" value="136" oninput="calcP2P()" />
+      </div>
+
+      <div class="result-grid">
+        <div class="stat-box green">
+          <div class="label">Net Trade Profit (ETB)</div>
+          <div class="value" id="resP2pProfit">400 ETB</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">2% Affiliate Bonus</div>
+          <div class="value" id="resP2pAff">2.00 USDT</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Official PAYchat Links -->
-  <div class="links-grid">
-    <a href="https://t.me/paychat_aibot" class="cta-btn" target="_blank">🤖 Open PAYchat Telegram MiniApp</a>
-    <a href="https://paychatads.com" class="cta-btn secondary" target="_blank">📢 Explore Channels & Prices</a>
-    <a href="https://paychat.info/ads" class="cta-btn secondary" target="_blank">🌐 PAYchat Telegram Advertising</a>
+  <!-- TAB 3: Channel ROI Estimator -->
+  <div id="tab-roi" class="tab-content">
+    <div class="card">
+      <div class="card-title">📈 Channel ROI Estimator (0% Fee)</div>
+      <div class="card-subtitle">Estimate your monthly Telegram channel ad revenue on PAYchat.</div>
+
+      <div class="form-group">
+        <label>Average Views Per Post</label>
+        <input type="number" id="roiViews" value="5000" oninput="calcROI()" />
+      </div>
+
+      <div class="form-group">
+        <label>Price Per Ad Post (USDT)</label>
+        <input type="number" id="roiPrice" value="15" oninput="calcROI()" />
+      </div>
+
+      <div class="form-group">
+        <label>Paid Ads Per Month</label>
+        <input type="number" id="roiCount" value="12" oninput="calcROI()" />
+      </div>
+
+      <div class="result-grid">
+        <div class="stat-box green">
+          <div class="label">Monthly Income (0% Fee)</div>
+          <div class="value" id="resRoiMonthly">$180.00</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Yearly Projection</div>
+          <div class="value" id="resRoiYearly">$2,160.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Bilingual User Guide (English Top / Amharic Bottom) -->
+  <div id="tab-guide" class="tab-content">
+    <div class="card">
+      <div class="card-title">📖 PAYchat Complete User Guide</div>
+      <div class="card-subtitle">English Guide (Top) • የአማርኛ መመሪያ (ከታች)</div>
+
+      <!-- 1. DEPOSIT GUIDE -->
+      <div class="guide-block">
+        <span class="guide-badge badge-blue">1. HOW TO DEPOSIT • ገንዘብ ማስገባት (DEPOSIT)</span>
+        
+        <div class="lang-en">
+          <strong>English Guide:</strong>
+          <ul class="guide-list">
+            <li><strong>Multiple Methods:</strong> Deposit directly via <em>Wallet Address</em>, <em>TON Wallet / GRAM</em>, <em>Card (Walt)</em>, or <em>P2P (Local Money)</em>.</li>
+            <li><strong>Supported Networks:</strong> TON (USDT), TRON (TRC-20), BSC (BEP-20), Polygon, Arbitrum, Celo, Optimism, and Avalanche.</li>
+            <li><strong>30-Minute Window:</strong> Once your deposit address is generated, complete the transfer within <strong>30 minutes</strong>.</li>
+            <li><strong>Credited Fast:</strong> Funds arrive in <strong>20–60 seconds</strong>. If delayed, submit your <em>TX ID</em> under <em>"Sent it but not credited yet?"</em>.</li>
+          </ul>
+          <div class="highlight-alert">
+            ⚠️ <strong>Exchange Fee Rule (+0.01 USDT):</strong> Sending from Binance or another exchange? Add <strong>0.01 USDT</strong> so the exact amount arrives. For example, to deposit <strong>50 USDT</strong>, send <strong>50.01 USDT</strong>.
+          </div>
+        </div>
+
+        <div class="lang-am">
+          <strong>የአማርኛ መመሪያ፦</strong>
+          <ul class="guide-list">
+            <li><strong>የማስገቢያ ዘዴዎች፦</strong> በቀጥታ በ<em>Wallet Address</em>፣ በ<em>TON Wallet / GRAM</em>፣ በካርድ (<em>Walt</em>)፣ ወይም በ<em>P2P (በብር)</em> ዲፖዚት ማድረግ ይችላሉ።</li>
+            <li><strong>የሚደገፉ ኔትወርኮች፦</strong> TON (USDT)፣ TRON (TRC-20)፣ BSC (BEP-20)፣ Polygon፣ Arbitrum እና ሌሎችንም ይደግፋል።</li>
+            <li><strong>የ30 ደቂቃ ሰዓት ገደብ፦</strong> የDeposit አድራሻ እንደተሰጠዎት <strong>በ30 ደቂቃ ውስጥ</strong> ገንዘቡን መላክ አለብዎት።</li>
+            <li><strong>ፈጣን ማረጋገጫ፦</strong> ከተላከ በኋላ በ<strong>20–60 ሰከንድ</strong> ውስጥ ይገባል። ዘግይቶ ከሆነ <em>TX ID</em> በማስገባት ወዲያውኑ ማረጋገጥ ይችላሉ።</li>
+          </ul>
+          <div class="highlight-alert">
+            ⚠️ <strong>ወሳኝ ማሳሰቢያ (+0.01 USDT)፦</strong> ከBinance ወይም ከሌላ Exchange ሲልኩ የመላኪያ ክፍያ ተቆርጦ ትክክለኛው መጠን እንዲደርስ <strong>0.01 USDT ጨምረው</strong> ይላኩ። ለምሳሌ <strong>50 ዶላር (USDT)</strong> ዲፖዚት ለማድረግ <strong>50.01 ዶላር</strong> መላክ አለብዎት።
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. WITHDRAW / CASH OUT GUIDE -->
+      <div class="guide-block">
+        <span class="guide-badge badge-green">2. HOW TO WITHDRAW (CASH OUT) • ገንዘብ ማውጣት</span>
+        
+        <div class="lang-en">
+          <strong>English Guide:</strong>
+          <ul class="guide-list">
+            <li><strong>Crypto Wallet / Exchange Cash Out:</strong> Tap <strong>Cash Out</strong> on the home screen to withdraw USDT directly to your wallet or exchange address.</li>
+            <li><strong>TON Network Only:</strong> Direct USDT wallet withdrawals run exclusively on the <strong>TON Network</strong> (enter a <code>UQ...</code> or <code>EQ...</code> address or connect your TON wallet).</li>
+          </ul>
+        </div>
+
+        <div class="lang-am">
+          <strong>የአማርኛ መመሪያ፦</strong>
+          <ul class="guide-list">
+            <li><strong>ወደ ዋሌት ወይም Exchange ማውጣት፦</strong> ዋናው ገጽ ላይ <strong>Cash Out</strong> የሚለውን በመጫን USDT በቀጥታ ወደ ዋሌትዎ ወይም ወደተለያዩ Exchange-ዎች ማውጣት ይችላሉ።</li>
+            <li><strong>TON Network ብቻ፦</strong> በቀጥታ ወደ ዋሌት የሚደረግ የUSDT ወጪ የሚሰራው በ<strong>TON Network</strong> ብቻ ነው (የ<code>UQ...</code> ወይም <code>EQ...</code> አድራሻ በማስገባት ወይም ዋሌት Connect በማድረግ)።</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 3. P2P TRADING GUIDE -->
+      <div class="guide-block">
+        <span class="guide-badge badge-gold">3. P2P TRADING (BUY & SELL) • የP2P ግብይት</span>
+        
+        <div class="lang-en">
+          <strong>English Guide:</strong>
+          <ul class="guide-list">
+            <li><strong>High Liquidity:</strong> Access a large network of active P2P merchants anytime.</li>
+            <li><strong>Local Payment Methods:</strong> Buy and sell seamlessly using <strong>Commercial Bank of Ethiopia (CBE)</strong>, <strong>Telebirr</strong>, <strong>M-Pesa</strong>, and other bank transfers.</li>
+            <li><strong>3-Minute Average Speed:</strong> Transactions are completed super fast—averaging <strong>under 3 minutes</strong>.</li>
+            <li><strong>100% Trusted & Safe:</strong> Every P2P trade is protected and <strong>100% trusted</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="lang-am">
+          <strong>የአማርኛ መመሪያ፦</strong>
+          <ul class="guide-list">
+            <li><strong>ብዙ የP2P አማራጮች፦</strong> በማንኛውም ሰዓት የሚገበያዩ እጅግ በርካታ የP2P ነጋዴዎች (Merchants) አሉ።</li>
+            <li><strong>የክፍያ አማራጮች (Payment Methods)፦</strong> በ<strong>ኢትዮጵያ ንግድ ባንክ (CBE)</strong>፣ በ<strong>ቴሌብር (Telebirr)</strong>፣ በ<strong>M-Pesa</strong> እና በተለያዩ የባንክ ትራንስፈሮች በቀላሉ መግዛትና መሸጥ ይችላሉ።</li>
+            <li><strong>ፈጣን ሰዓት (Average Time)፦</strong> ሲላላኩ የሚቆዩበት አማካይ ጊዜ <strong>ቢበዛ 3 ደቂቃ</strong> ብቻ ነው።</li>
+            <li><strong>100% ተዓማኒነት፦</strong> ሁሉም የP2P ግብይቶች <strong>100% ታማኝ እና አስተማማኝ</strong> ናቸው።</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 4. ADS & BONUS GUIDE -->
+      <div class="guide-block">
+        <span class="guide-badge badge-blue">4. CHANNEL ADS & $30 CREDIT • ማስታወቂያ እና ቦነስ</span>
+        
+        <div class="lang-en">
+          <strong>English Guide:</strong>
+          <ul class="guide-list">
+            <li><strong>Refund Guaranteed Ads:</strong> Browse verified channels with transparent Views, Reach, and stay duration—backed by a <strong>100% Refund Guarantee</strong>.</li>
+            <li><strong>$30 Welcome Credit:</strong> Eligible accounts receive up to <strong>$30 ad credit</strong> to launch campaigns right away.</li>
+          </ul>
+        </div>
+
+        <div class="lang-am">
+          <strong>የአማርኛ መመሪያ፦</strong>
+          <ul class="guide-list">
+            <li><strong>100% ዋስትና ያለው ማስታወቂያ፦</strong> የቻናሎችን እይታ (Views) እና ቆይታ በግልጽ አይተው ማስታወቂያ ማሰራት ይችላሉ፤ ፖስቱ ካልተለጠፈ <strong>100% ገንዘብ ተመላሽ (Refund Guaranteed)</strong> ነው።</li>
+            <li><strong>የ$30 Welcome Credit፦</strong> አዳዲስ ተጠቃሚዎች ማስታወቂያ ለመጀመር የሚያግዝ የ<strong>$30 Credit</strong> ቦነስ ያገኛሉ።</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cta-footer">
+        <a href="https://t.me/PAYchatBot" class="cta-btn" target="_blank">🚀 Launch Official PAYchat Bot</a>
+      </div>
+    </div>
   </div>
 
   <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-
-    function switchTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      ['campaign', 'p2p', 'channel'].forEach(id => document.getElementById(id + '-section').classList.add('hidden'));
-      
-      if (tab === 'campaign') document.querySelectorAll('.tab-btn')[0].classList.add('active');
-      if (tab === 'p2p') document.querySelectorAll('.tab-btn')[1].classList.add('active');
-      if (tab === 'channel') document.querySelectorAll('.tab-btn')[2].classList.add('active');
-      
-      document.getElementById(tab + '-section').classList.remove('hidden');
+    // Initialize Telegram WebApp
+    if (window.Telegram && window.Telegram.WebApp) {
+      const tg = window.Telegram.WebApp;
+      tg.ready();
+      tg.expand();
     }
 
-    function generate5Posts() {
-      const name = document.getElementById('prodName').value || 'Our Channel';
-      const benefit = document.getElementById('prodBenefit').value || 'smart, reliable updates every day';
-      const link = document.getElementById('prodLink').value || 'https://t.me/paychat_aibot';
+    function switchTab(tabName, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function generateAds() {
+      const prod = document.getElementById('adProduct').value.trim() || 'PAYchat';
+      const benefit = document.getElementById('adBenefit').value.trim() || 'Fast & secure USDT/ETB transactions with 0% fees';
+      const link = document.getElementById('adLink').value.trim() || 'https://t.me/PAYchatBot';
 
       const posts = [
-        {
-          title: '1️⃣ The Introduction — Build awareness',
-          text: `Tired of wasting time searching for reliable info?\n\nMeet ${name} — created to give you ${benefit}.\n\nSee what we're about 👉 ${link}`
-        },
-        {
-          title: '2️⃣ The Main Promotion — Show the value',
-          text: `🚀 Ready to level up?\n\nJoin ${name} and get ${benefit} delivered straight to you.\n\nExplore now 👉 ${link}`
-        },
-        {
-          title: '3️⃣ The Reminder — Build confidence',
-          text: `Why are people joining ${name}?\n\n✅ ${benefit}\n✅ Clear & actionable content\n✅ Active community\n\nCheck it out 👉 ${link}`
-        },
-        {
-          title: '4️⃣ The Follow-up — Answer objections',
-          text: `Not sure if ${name} is for you?\n\nIt's completely free to join and see how ${benefit} works for you.\n\nTake a look 👉 ${link}`
-        },
-        {
-          title: '5️⃣ The Final Call — Encourage action',
-          text: `🎯 Don't miss out!\n\nJoin ${name} today and start benefiting from ${benefit} right away.\n\nTap to join 👉 ${link}`
-        }
+        `🔥 Post 1 (Hook): Stop wasting money on high fees!\nDiscover ${prod} — ${benefit}.\n👉 Start now: ${link}`,
+        `⚡ Post 2 (Speed & Trust): Need results in under 3 minutes?\nJoin thousands already using ${prod} every day.\n🚀 Try it here: ${link}`,
+        `💰 Post 3 (Profit Angle): Maximize your daily earnings with ${prod}!\n${benefit}.\n📲 Launch instantly: ${link}`,
+        `🛡️ Post 4 (Social Proof): 100% trusted, fast, and built right inside Telegram.\nExperience ${prod} today!\n🔗 Join here: ${link}`,
+        `🎯 Post 5 (Urgent CTA): Ready to level up?\nGet started with ${prod} in seconds — ${benefit}.\n👇 Tap below: ${link}`
       ];
 
-      const container = document.getElementById('postsOutput');
+      const container = document.getElementById('adsOutput');
       container.innerHTML = '';
-      posts.forEach((p, idx) => {
-        container.innerHTML += `
-          <div class="post-card">
-            <div class="post-title">${p.title}</div>
-            <div id="post-txt-${idx}" style="white-space: pre-line;">${p.text}</div>
-            <button class="copy-btn" onclick="copyPost(${idx})">📋 Copy Post ${idx + 1}</button>
-          </div>
-        `;
+      posts.forEach((text, i) => {
+        const div = document.createElement('div');
+        div.className = 'post-item';
+        div.innerHTML = `<div>${text}</div><button class="btn-copy" onclick="copyText(this, \`${text.replace(/`/g, '\\`')}\`)">📋 Copy Post ${i + 1}</button>`;
+        container.appendChild(div);
       });
     }
 
-    function copyPost(idx) {
-      const txt = document.getElementById(`post-txt-${idx}`).innerText;
-      navigator.clipboard.writeText(txt);
-      alert('Post ' + (idx + 1) + ' copied!');
+    function copyText(btn, text) {
+      navigator.clipboard.writeText(text);
+      const old = btn.innerText;
+      btn.innerText = '✅ Copied!';
+      setTimeout(() => btn.innerText = old, 1500);
     }
 
     function calcP2P() {
-      const amt = parseFloat(document.getElementById('usdtAmt').value) || 0;
-      const buy = parseFloat(document.getElementById('buyRate').value) || 0;
-      const sell = parseFloat(document.getElementById('sellRate').value) || 0;
-      const affPct = parseFloat(document.getElementById('affBonus').value) || 0;
+      const usdt = parseFloat(document.getElementById('p2pUsdt').value) || 0;
+      const buy = parseFloat(document.getElementById('p2pBuy').value) || 0;
+      const sell = parseFloat(document.getElementById('p2pSell').value) || 0;
 
-      const cost = amt * buy;
-      const rev = amt * sell;
-      const aff = rev * (affPct / 100);
-      const profit = (rev - cost) + aff;
+      const profit = (sell - buy) * usdt;
+      const aff = usdt * 0.02;
 
-      document.getElementById('p2pCost').innerText = cost.toLocaleString() + ' ETB';
-      document.getElementById('p2pAff').innerText = aff.toFixed(1) + ' ETB';
-      const el = document.getElementById('p2pProfit');
-      el.innerText = (profit >= 0 ? '+' : '') + profit.toFixed(1) + ' ETB';
-      el.style.color = profit >= 0 ? '#10b981' : '#ef4444';
+      document.getElementById('resP2pProfit').innerText = profit.toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' ETB';
+      document.getElementById('resP2pAff').innerText = aff.toFixed(2) + ' USDT';
     }
 
-    function calcChannel() {
-      const price = parseFloat(document.getElementById('adPriceUsd').value) || 0;
-      const count = parseFloat(document.getElementById('adsMonth').value) || 0;
-      const usd = price * count;
-      const etb = usd * 182;
+    function calcROI() {
+      const price = parseFloat(document.getElementById('roiPrice').value) || 0;
+      const count = parseFloat(document.getElementById('roiCount').value) || 0;
 
-      document.getElementById('chUsd').innerText = '$' + usd.toLocaleString();
-      document.getElementById('chEtb').innerText = etb.toLocaleString() + ' ETB';
+      const monthly = price * count;
+      const yearly = monthly * 12;
+
+      document.getElementById('resRoiMonthly').innerText = '$' + monthly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('resRoiYearly').innerText = '$' + yearly.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
-
-    calcP2P();
-    calcChannel();
   </script>
 </body>
 </html>
